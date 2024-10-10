@@ -33,7 +33,7 @@ public class GreetingController {
     public String greet(){
         return greetingService.greet();
     }
-    @GetMapping("gt2")
+    @GetMapping("/gt2")
     public String greet2(){
         return greetingService2.greet();
     }

@@ -1,0 +1,35 @@
+@startuml
+title Partes de una Solicitud HTTP
+
+actor "Cliente (Navegador)" as client
+participant "Internet" as internet
+participant "Servidor Web" as webserver
+participant "Aplicación Web" as webapp
+participant "Base de Datos" as database
+
+'Inicio del proceso - cliente envía la solicitud
+client -> internet: Realiza solicitud HTTP (GET / POST)
+note right: La solicitud se envía a través de la red usando el protocolo HTTP
+
+internet -> webserver: Transfiere la solicitud HTTP
+note right: La solicitud llega al servidor web
+
+webserver -> webapp: Pasa la solicitud a la aplicación web
+note right: El servidor web delega la solicitud a la aplicación
+
+webapp -> database: Solicita datos (si es necesario)
+note right: La aplicación puede consultar la base de datos \n para obtener información
+
+database --> webapp: Devuelve datos a la aplicación web
+note left: La base de datos responde con los datos solicitados
+
+webapp --> webserver: Responde con contenido dinámico (HTML, JSON, etc.)
+note left: La aplicación envía la respuesta procesada al servidor web
+
+webserver --> internet: Transfiere la respuesta HTTP
+note left: El servidor web envía la respuesta al cliente a través de la red
+
+internet --> client: El cliente recibe la respuesta HTTP
+note left: El navegador o cliente muestra la información solicitada \n al usuario final
+
+@enduml
