@@ -1,9 +1,15 @@
 package com.codigo.persistencia.controller;
 
 import ch.qos.logback.core.net.server.Client;
+import com.codigo.persistencia.aggregates.request.RequestCategoria;
+import com.codigo.persistencia.aggregates.request.RequestProducto;
+import com.codigo.persistencia.entity.CategoriaEntity;
 import com.codigo.persistencia.entity.ProductEntity;
+import com.codigo.persistencia.entity.ProductoEntity;
+import com.codigo.persistencia.repository.CategoriaRepository;
 import com.codigo.persistencia.repository.ProductRepository;
 import com.codigo.persistencia.service.ProductService;
+import com.codigo.persistencia.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +24,11 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ProductoService productoService;
+
+    @Autowired
+    private CategoriaRepository categoriaRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -56,6 +67,20 @@ public class ProductController {
     public ResponseEntity<Void> eliminarProducto(@PathVariable Long id){
         productService.eliminarProducto(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<ProductoEntity> guardarProducto(@RequestBody RequestProducto requestProducto) {
+        ProductoEntity producto = productoService.guardarProducto(requestProducto);
+        return new ResponseEntity<>(producto, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/createCate")
+    public ResponseEntity<CategoriaEntity> guardarCategoria(@RequestBody RequestCategoria categoria) {
+        CategoriaEntity categoriaEntity = new CategoriaEntity();
+        categoriaEntity.setDescripcion(categoria.getDescripcion());
+        CategoriaEntity categoriaSave = categoriaRepository.save(categoriaEntity);
+        return new ResponseEntity<>(categoriaSave, HttpStatus.CREATED);
     }
 
 }
