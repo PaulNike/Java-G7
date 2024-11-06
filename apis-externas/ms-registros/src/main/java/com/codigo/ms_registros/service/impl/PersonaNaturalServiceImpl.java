@@ -114,7 +114,8 @@ public class PersonaNaturalServiceImpl implements PersonaNaturalService {
     }
 
     //Metodo que prepara el client Retrofit de Reniec
-    private Call<ResponseReniec> prepareReniecRetrofit(String dni){
+    private Call<ResponseReniec> prepareReniecRetrofit(
+            String dni){
         String tokenComplete = "Bearer "+token;
         log.info("prepareReniecRetrofit -> Ejecutando Metodo de Apoyo que crea el objeto retrofit completo");
         return reniecServiceRetrofit.getInfoReniec(tokenComplete,dni);
@@ -127,7 +128,8 @@ public class PersonaNaturalServiceImpl implements PersonaNaturalService {
         //Configurar una URL completa como String
         String url = "https://api.apis.net.pe/v2/reniec/dni?numero="+dni;
         //Genero mi CLient RestTemplate y Ejecuto
-        ResponseEntity<ResponseReniec> executeRestTemplate = restTemplate.exchange(
+        ResponseEntity<ResponseReniec> executeRestTemplate =
+                restTemplate.exchange(
                 url, //URL A LA CUAL VAS A EJECUTAR
                 HttpMethod.GET, //TIPO DE SOLICITUD AL QUE PERTENCE LA URL
                 new HttpEntity<>(createHeaders()), //CABECERAS || HEADERS
