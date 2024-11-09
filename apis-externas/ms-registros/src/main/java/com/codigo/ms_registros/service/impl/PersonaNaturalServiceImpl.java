@@ -4,13 +4,14 @@ import com.codigo.ms_registros.aggregates.constants.Constants;
 import com.codigo.ms_registros.aggregates.response.ResponseReniec;
 import com.codigo.ms_registros.client.ClientReniec;
 import com.codigo.ms_registros.entity.PersonaNaturalEntity;
+import com.codigo.ms_registros.redis.RedisService;
 import com.codigo.ms_registros.repository.PersonaNaturalRepository;
 import com.codigo.ms_registros.retrofit.ClientReniecService;
 import com.codigo.ms_registros.retrofit.impl.ClientReniecServiceImpl;
 import com.codigo.ms_registros.service.PersonaNaturalService;
+import com.codigo.ms_registros.util.Util;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -28,6 +29,7 @@ public class PersonaNaturalServiceImpl implements PersonaNaturalService {
     private final PersonaNaturalRepository personaNaturalRepository;
     private final ClientReniec clientReniec;
     private final RestTemplate restTemplate;
+    private final RedisService redisService;
 
 
     ClientReniecService reniecServiceRetrofit = ClientReniecServiceImpl
@@ -39,10 +41,11 @@ public class PersonaNaturalServiceImpl implements PersonaNaturalService {
 
     public PersonaNaturalServiceImpl(PersonaNaturalRepository personaNaturalRepository,
                                      ClientReniec clientReniec,
-                                     RestTemplate restTemplate) {
+                                     RestTemplate restTemplate, RedisService redisService) {
         this.personaNaturalRepository = personaNaturalRepository;
         this.clientReniec = clientReniec;
         this.restTemplate = restTemplate;
+        this.redisService = redisService;
     }
 
     @Override
@@ -55,6 +58,27 @@ public class PersonaNaturalServiceImpl implements PersonaNaturalService {
             return null;
         }
     }
+
+    @Override
+    public ResponseReniec getInfoReniec(String dni) {
+        ResponseReniec datosReniec = new ResponseReniec();
+        //Recupero la Información de Redis
+        String redisInfo = redisService.getDataFromRedis(Constants.REDIS_KEY_API_RENIEC+dni);
+        //Valido que exista la info
+        if(Objects.nonNull(redisInfo)){
+            datosReniec = Util.convertirDesdeString(redisInfo, ResponseReniec.class);
+            return datosReniec;
+        }else{
+            //Sino existe la data en redis me voy a Reniec api
+            datosReniec = executeRestTemplate(dni);
+            //Convertir a String para poder guardarlo en Redis
+            String dataForRedis = Util.convertirAString(datosReniec);
+            //Guardando en Redis la información
+            redisService.saveInRedis(Constants.REDIS_KEY_API_RENIEC+dni,dataForRedis,Constants.REDIS_TTL);
+            return datosReniec;
+        }
+    }
+
     private PersonaNaturalEntity getEntity(String dni) throws IOException {
         PersonaNaturalEntity personaNaturalEntity = new PersonaNaturalEntity();
         //Ejecuta a Reniec usando OpenFeign
@@ -90,8 +114,21 @@ public class PersonaNaturalServiceImpl implements PersonaNaturalService {
 
     private PersonaNaturalEntity getEntityForRestTemplate(String dni) throws IOException {
         PersonaNaturalEntity personaNaturalEntity = new PersonaNaturalEntity();
+        ResponseReniec datosReniec = new ResponseReniec();
+        //Recupero la Información de Redis
+        String redisInfo = redisService.getDataFromRedis(dni);
+        //Valido que exista la info
+        if(Objects.nonNull(redisInfo)){
+            datosReniec = Util.convertirDesdeString(redisInfo, ResponseReniec.class);
+        }else{
+            //Sino existe la data en redis me voy a Reniec api
+            datosReniec = executeRestTemplate(dni);
+            //Convertir a String para poder guardarlo en Redis
+            String dataForRedis = Util.convertirAString(datosReniec);
+            //Guardando en Redis la información
+            redisService.saveInRedis(dni,dataForRedis,Constants.REDIS_TTL);
+        }
         //Validar el resultado
-        ResponseReniec datosReniec = executeRestTemplate(dni);
         if(Objects.nonNull(datosReniec)){
             personaNaturalEntity.setNombres(datosReniec.getNombres());
             personaNaturalEntity.setApellidoPaterno(datosReniec.getApellidoPaterno());

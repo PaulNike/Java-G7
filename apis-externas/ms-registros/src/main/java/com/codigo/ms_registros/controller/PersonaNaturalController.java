@@ -1,5 +1,6 @@
 package com.codigo.ms_registros.controller;
 
+import com.codigo.ms_registros.aggregates.response.ResponseReniec;
 import com.codigo.ms_registros.entity.PersonaNaturalEntity;
 import com.codigo.ms_registros.service.PersonaNaturalService;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -97,4 +98,12 @@ public class PersonaNaturalController {
         PersonaNaturalEntity personaNatural = personaNaturalService.guardar(dni);
         return new ResponseEntity<>(personaNatural, HttpStatus.CREATED);
     }
+
+    @GetMapping("/reniec/{dni}")
+    public ResponseEntity<ResponseReniec> getInfoReniec(
+            @PathVariable String dni){
+     return new ResponseEntity<>(personaNaturalService
+             .getInfoReniec(dni),HttpStatus.OK);
+    }
+
 }
