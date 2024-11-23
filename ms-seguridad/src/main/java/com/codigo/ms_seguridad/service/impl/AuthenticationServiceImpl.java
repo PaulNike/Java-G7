@@ -1,24 +1,34 @@
 package com.codigo.ms_seguridad.service.impl;
 
 import com.codigo.ms_seguridad.aggregates.constants.Constants;
+import com.codigo.ms_seguridad.aggregates.request.SignInRefreshToken;
+import com.codigo.ms_seguridad.aggregates.request.SignInRequest;
 import com.codigo.ms_seguridad.aggregates.request.SignUpRequest;
+import com.codigo.ms_seguridad.aggregates.response.SignInResponse;
 import com.codigo.ms_seguridad.entity.Rol;
 import com.codigo.ms_seguridad.entity.Role;
 import com.codigo.ms_seguridad.entity.Usuario;
 import com.codigo.ms_seguridad.repository.RolRepository;
 import com.codigo.ms_seguridad.repository.UsuarioRepository;
 import com.codigo.ms_seguridad.service.AuthenticationService;
+import com.codigo.ms_seguridad.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+
 
     @Override
     public Usuario signUpUser(SignUpRequest signUpRequest) {
@@ -32,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .nombres(signUpRequest.getNombres())
                 .apellidos(signUpRequest.getApellidos())
                 .email(signUpRequest.getEmail())
-                .password(signUpRequest.getPassword())
+                .password(new BCryptPasswordEncoder().encode(signUpRequest.getPassword()))
                 .tipoDoc(signUpRequest.getTipoDoc())
                 .numDoc(signUpRequest.getNumDoc())
                 .isAccountNonExpired(Constants.STATUS_ACTIVE)
@@ -44,13 +54,59 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Usuario signUpAdmin(SignUpRequest signUpRequest) {
         Usuario usuario = getUsuarioEntity(signUpRequest);
-        usuario.setRoles(Collections.singleton(getRoles(Role.ADMIN)));
+        Set<Rol> roles = new HashSet<>();
+        roles.add(getRoles(Role.USER));
+        roles.add(getRoles(Role.ADMIN));
+        usuario.setRoles(roles);
         return usuarioRepository.save(usuario);
     }
 
     @Override
     public List<Usuario> todos() {
         return usuarioRepository.findAll();
+    }
+
+    @Override
+    public SignInResponse signIn(SignInRequest signInRequest) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                signInRequest.getEmail(),signInRequest.getPassword()
+        ));
+        var user = usuarioRepository.findByEmail(signInRequest.getEmail()).orElseThrow(
+                () -> new UsernameNotFoundException("Error Usuario no encontrado en base de datos"));
+        var token = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
+        return SignInResponse.builder()
+                .token(token)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    @Override
+    public SignInResponse getTokenByRefresh(SignInRefreshToken signInRefreshToken) {
+        //VALIDAMOS QUE SEA UN REFRESH TOKEN
+        if (!jwtService.isRefreshToken(signInRefreshToken.getRefreshToken())){
+            throw new RuntimeException("ERROR EL TOKEN INGRESADO NO ES: TYPE : REFRESH");
+        }
+        //EXTRAEMOS EL SUBJECT DEL TOKEN
+        String userEmail = jwtService.extractUsername(signInRefreshToken.getRefreshToken());
+
+        //BUSCAMOS AL SUJETO EN LA BASE DE DATOS:
+        Usuario usuario = usuarioRepository.findByEmail(userEmail).orElseThrow(() ->
+                new UsernameNotFoundException("No se encontro al usuario"));
+
+        //VALIDAMOS QUE EL REFRESH LE PERTENEZCA AL USUARIO
+        if(!jwtService.validateToken(signInRefreshToken.getRefreshToken(), usuario)){
+            throw  new RuntimeException("Error el token no le pertenece al usuario");
+        }
+        //Generamos el nuevo token access
+        String newToken = jwtService.generateToken(usuario);
+        //si gustamos podemos generar un nuevo refresh token,
+        // caso contrario devolvemos el mismo con el que generamos.
+
+        return SignInResponse.builder()
+                .token(newToken)
+                .refreshToken(signInRefreshToken.getRefreshToken())
+                .build();
     }
 
     private Rol getRoles(Role rolBuscado){
