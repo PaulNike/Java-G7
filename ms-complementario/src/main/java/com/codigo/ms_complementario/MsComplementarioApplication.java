@@ -1,15 +1,17 @@
-package com.codigo.ms_seguridad;
+package com.codigo.ms_complementario;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
+@EnableFeignClients
 @EnableDiscoveryClient
-public class MsSeguridadApplication {
+public class MsComplementarioApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MsSeguridadApplication.class, args);
+		SpringApplication.run(MsComplementarioApplication.class, args);
 	}
 
 }

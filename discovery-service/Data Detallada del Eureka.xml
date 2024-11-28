@@ -1,0 +1,71 @@
+<applications>
+    <versions__delta>1</versions__delta>
+    <apps__hashcode>UP_2_</apps__hashcode>
+    <application> --> LAS PLICACIONES QUE TENEMOS
+        <name>MS-SEGURIDAD</name> -> NOMBRE DE APLICACION
+        <instance> -> INSTANCIAS ACTIVAS (PUEDEN SER VARIAS INSTANCIAS DEL MISMO MICROSERVICIO)
+            <instanceId>ms-seguridad:20fa18a7-8870-44b6-96da-0f0a523bcdbd</instanceId> -> IDENTIFICADOR UNICO DE LA INSTANCIA
+            <hostName>host.docker.internal</hostName> -> NOMBRE DEL HOST DONDE SE EJECUTA LA INSTANCIA
+            <app>MS-SEGURIDAD</app> -> NOMBRE DE LA APLICACION A LA QUE PERTENECE LA INSTANCIA
+            <ipAddr>192.168.18.6</ipAddr> -> IP DE LA INSTANCIA
+            <status>UP</status> -> ESTADO DE LA INSTANCIA(UP -> LEVANTADO OK, DOWN -> CAIDO, OUT_OF_sERVICE -> INSTANCIA NO DISPONIBLE PARA SOLICITUDES, STARTING -> INICIANDO LA INSTANCIA )			
+            <overriddenstatus>UNKNOWN</overriddenstatus> -> ESTADO SOBREESCRITO MANUALMENTE DESDE LA CONFIGURACION(SI NO LO TIENES CONFIGURADO SERA UNKNOWN -> DESCONOCIDO)
+            <port enabled="true">59488</port> -> PUERTO EN EL QUE SE EJECUTA LA INSTANCIA
+            <securePort enabled="false">443</securePort> -> PUERTO SEGURO EN EL QUE LA INSTANCIA ESCUCHA (SSL)
+            <countryId>1</countryId> -> IDENTIFICADOR NUMERICO DEL PAIS
+            <dataCenterInfo class="com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo"> -> DESCRIBE DONDE ESTA DESPLEGADA LA INSTANCIA (CENTRO DE DATOS)
+                <name>MyOwn</name> -> INDICAMOS EL TIPO DE CENTRO DE DATOS QUE USAMO (MYOWN -> PARA IMPLEMENTACIONES PERSONALIZADAS)
+            </dataCenterInfo>
+            <leaseInfo> -> INFORMACION DE ARRENDAMIENTO DE LA INSTANCIA
+                <renewalIntervalInSecs>30</renewalIntervalInSecs> -> INTERVALO DE TIEMPO (EN SEGUNDOS) EN EL QUE NUESTRA INSTANCIA RENUEVA SU REGISTRO
+                <durationInSecs>90</durationInSecs> -> TIEMPO DESPUES DEL CUAL NUESTRA INSTANCIA SE CONSIDERA INACTIVA 
+                <registrationTimestamp>1732756810833</registrationTimestamp> -> TIEMPO EN EL QUE LA INSTANCIA SE REGISTRO
+                <lastRenewalTimestamp>1732756810833</lastRenewalTimestamp> -> ULTIMA VEZ EN EL QUE LA INSTANCIA RENOVO SU REGISTRO
+                <evictionTimestamp>0</evictionTimestamp> -> MARCA DE TIEMPO EN EL QUE LA INSTANCIA FUE ELIMINADA (DELETED)
+                <serviceUpTimestamp>1732756810303</serviceUpTimestamp> -> MARCA DE TIEMPO CUANDO LA INSTANCIA ESTUVO COMPLETAMENTE OPERATIVA
+            </leaseInfo>
+            <metadata class="java.util.Collections$EmptyMap"/> ->INFORMACION DE METADATOS ADICIONALES DE NUESTRA INSTANCIA
+            <homePageUrl>http://host.docker.internal:59488/</homePageUrl> -> URL de la pagina principal de nuestra instancia
+            <statusPageUrl>http://host.docker.internal:59488/actuator/info</statusPageUrl> URL de la pagina que expone información de estado sobre la instancia
+            <healthCheckUrl>http://host.docker.internal:59488/actuator/health</healthCheckUrl> -> URL PARA VERIFICAR EL ESTADO A NIVEL SALUD DE LA INSTANCIA
+            <vipAddress>ms-seguridad</vipAddress> -> IP VIRTUAL que utiliza nuestra instancia
+            <secureVipAddress>ms-seguridad</secureVipAddress> -> DIRECCION IP VIRTUAL SEGURA
+            <isCoordinatingDiscoveryServer>false</isCoordinatingDiscoveryServer> -> INDICA SI LA INSTANCIA COORDINA SU PROPIA DETECCION DE SERVICIOS
+            <lastUpdatedTimestamp>1732756810833</lastUpdatedTimestamp> -> ULTIMA VEZ QUE SE ACTUALIZO LA INFO DE LA INSTANCIA HACIA EL EUREKA
+            <lastDirtyTimestamp>1732756810239</lastDirtyTimestamp> -> TIEMPO DE CUANDO SE CAMBIO LA INFORMACIÓN DE LA ULTIMA ACTUALIZACION
+            <actionType>ADDED</actionType> -> ADDED : INSTANCIA GREGADA -> MODIFIED: INSTANCIA MODIFICADA -> DELETED : ISNTANCIA ELIMINADA
+        </instance>
+        <instance>
+            <instanceId>ms-seguridad:d1f42309-b0e7-437d-b037-0c7505ebc983</instanceId>
+            <hostName>host.docker.internal</hostName>
+            <app>MS-SEGURIDAD</app>
+            <ipAddr>192.168.18.6</ipAddr>
+            <status>UP</status>
+            <overriddenstatus>UNKNOWN</overriddenstatus>
+            <port enabled="true">59437</port>
+            <securePort enabled="false">443</securePort>
+            <countryId>1</countryId>
+            <dataCenterInfo class="com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo">
+                <name>MyOwn</name>
+            </dataCenterInfo>
+            <leaseInfo>
+                <renewalIntervalInSecs>30</renewalIntervalInSecs>
+                <durationInSecs>90</durationInSecs>
+                <registrationTimestamp>1732756573671</registrationTimestamp>
+                <lastRenewalTimestamp>1732756903728</lastRenewalTimestamp>
+                <evictionTimestamp>0</evictionTimestamp>
+                <serviceUpTimestamp>1732756573161</serviceUpTimestamp>
+            </leaseInfo>
+            <metadata class="java.util.Collections$EmptyMap"/>
+            <homePageUrl>http://host.docker.internal:59437/</homePageUrl>
+            <statusPageUrl>http://host.docker.internal:59437/actuator/info</statusPageUrl>
+            <healthCheckUrl>http://host.docker.internal:59437/actuator/health</healthCheckUrl>
+            <vipAddress>ms-seguridad</vipAddress>
+            <secureVipAddress>ms-seguridad</secureVipAddress>
+            <isCoordinatingDiscoveryServer>false</isCoordinatingDiscoveryServer>
+            <lastUpdatedTimestamp>1732756573671</lastUpdatedTimestamp>
+            <lastDirtyTimestamp>1732756573103</lastDirtyTimestamp>
+            <actionType>ADDED</actionType>
+        </instance>
+    </application>
+</applications>
