@@ -62,9 +62,15 @@ public class AuthenticationController {
     }
 
     @GetMapping("/clave")
-    public ResponseEntity<String> getClaveFirma(){
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-        String dato = Base64.getEncoder().encodeToString(key.getEncoded());
+    public ResponseEntity<String> getClaveFirma(@RequestHeader("X-Code-App") String valor){
+        String dato;
+        if(valor.equals("Validado")){
+            Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+            dato = Base64.getEncoder().encodeToString(key.getEncoded());
+        }else {
+            dato=null;
+        }
+
         return ResponseEntity.ok(dato);
     }
 

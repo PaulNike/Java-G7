@@ -10,7 +10,7 @@ import java.util.List;
 @FeignClient(name = "ms-seguridad")
 public interface SeguridadClient {
 
-    @GetMapping("/api/user/v1/all")
+    @GetMapping("/apis/codigo/api/user/v1/all")
     List<UsuarioResponseClient> getInfoUsers(
             @RequestHeader("Authorization") String auth);
 }
