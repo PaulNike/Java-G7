@@ -12,9 +12,11 @@ import com.codigo.ms_seguridad.repository.RolRepository;
 import com.codigo.ms_seguridad.repository.UsuarioRepository;
 import com.codigo.ms_seguridad.service.AuthenticationService;
 import com.codigo.ms_seguridad.service.JwtService;
+import com.codigo.ms_seguridad.service.UsuarioSerice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final RolRepository rolRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UsuarioSerice usuarioSerice;
 
 
     @Override
@@ -107,6 +110,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .token(newToken)
                 .refreshToken(signInRefreshToken.getRefreshToken())
                 .build();
+    }
+
+    @Override
+    public boolean validateToken(String token) {
+        final String jwt;
+        final String userEmail;
+
+        if(Objects.nonNull(token) && !token.trim().isEmpty()){
+           jwt = token.substring(7); //Bearer
+           userEmail = jwtService.extractUsername(jwt);
+           if(Objects.nonNull(userEmail) && !userEmail.trim().isEmpty()){
+               UserDetails userDetails = usuarioSerice
+                       .userDetailsService()
+                       .loadUserByUsername(userEmail);
+               return jwtService.validateToken(jwt, userDetails);
+           }
+        }
+        return false;
     }
 
     private Rol getRoles(Role rolBuscado){

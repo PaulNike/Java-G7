@@ -20,5 +20,7 @@ public interface AuthenticationService {
     // OBTENER NEUVO TOKEN DESDE UN REFRESH TOKEN
     SignInResponse getTokenByRefresh(SignInRefreshToken signInRefreshToken);;
 
+    //Validar token
+    boolean validateToken(String token);
 
 }

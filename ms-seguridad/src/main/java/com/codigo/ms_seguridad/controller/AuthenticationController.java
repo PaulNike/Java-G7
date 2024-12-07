@@ -78,4 +78,10 @@ public class AuthenticationController {
     public ResponseEntity<String> getPrueba(){
         return ResponseEntity.ok(datoPropiedad);
     }
+
+    @PostMapping("/validateToken")
+    public ResponseEntity<Boolean> validateToken(@RequestHeader("validate")
+                                                 String validate){
+        return ResponseEntity.ok(authenticationService.validateToken(validate));
+    }
 }
