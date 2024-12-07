@@ -47,7 +47,7 @@ public class GlobalFilterConfiguration {
             }
 
             //Obtener el token de la solicitud (Token debe llegar puro osea sin Bearer)
-            String token = "Bearer " + exchange.getRequest().getHeaders().getFirst("validate");
+            String token = exchange.getRequest().getHeaders().getFirst("Authorization");
 
             //Validamos qeu el token no sea nulo o vacio
             if(token == null || token.isEmpty()){
@@ -56,7 +56,7 @@ public class GlobalFilterConfiguration {
             }
 
             //Crear la URl completa usando al Eureka Server y el ENdPoint que se ejecutara
-            String serviceUrl = getServiceUrl("ms-seguridad", "/apis/codigo/api/authentication/v1/validateToken");
+            String serviceUrl = getServiceUrl("ms-seguridad", "apis/codigo/api/authentication/v1/validateToken");
 
             //Ejecutamos el servicio de validacion
             return webClientBuilder.build()
@@ -96,7 +96,7 @@ public class GlobalFilterConfiguration {
 
         @Override
         public int getOrder() {
-            return 0;
+            return 0; // Menor valor == Mayor prioridad || Mayor Valor == Menor Prioridad
         }
     }
 }
